@@ -21,11 +21,11 @@ func (self *Classpath) parseBootAndExtClasspath(jreOption string) {
 
 	// jre/lib/*
 	jreLibPath := filepath.Join(jreDir, "lib", "*")
-	self.bootClasspath = new_wildcard_entry(jreLibPath)
+	self.bootClasspath = newWildcardEntry(jreLibPath)
 
 	// jre/lib/ext/*
 	jreExtPath := filepath.Join(jreDir, "lib", "ext", "*")
-	self.extClasspath = new_wildcard_entry(jreExtPath)
+	self.extClasspath = newWildcardEntry(jreExtPath)
 }
 
 func getJreDir(jreOption string) string {
@@ -54,21 +54,21 @@ func (self *Classpath) parseUserClasspath(cpOption string) {
 	if cpOption == "" {
 		cpOption = "."
 	}
-	self.userClasspath = new_entry(cpOption)
+	self.userClasspath = newEntry(cpOption)
 }
 
 // className: fully/qualified/ClassName
 func (self *Classpath) ReadClass(className string) ([]byte, Entry, error) {
 	className = className + ".class"
-	if data, entry, err := self.bootClasspath.read_class(className); err == nil {
+	if data, entry, err := self.bootClasspath.readClass(className); err == nil {
 		return data, entry, err
 	}
-	if data, entry, err := self.extClasspath.read_class(className); err == nil {
+	if data, entry, err := self.extClasspath.readClass(className); err == nil {
 		return data, entry, err
 	}
-	return self.userClasspath.read_class(className)
+	return self.userClasspath.readClass(className)
 }
 
-func (self *Classpath) to_string() string {
-	return self.userClasspath.to_string()
+func (self *Classpath) String() string {
+	return self.userClasspath.String()
 }
