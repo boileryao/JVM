@@ -4,7 +4,7 @@ import "strings"
 import "os"
 import "path/filepath"
 
-func new_wildcard_entry(pathList string) CompositeEntry {
+func newWildcardEntry(pathList string) CompositeEntry {
 	baseDir := strings.TrimRight(pathList, "*")
 	compositeEntry := []Entry{}
 
@@ -18,7 +18,7 @@ func new_wildcard_entry(pathList string) CompositeEntry {
 		}
 
 		if strings.HasSuffix(strings.ToUpper(path), ".JAR") {
-			jarEntry := new_zip_entry(path)
+			jarEntry := newZipEntry(path)
 			compositeEntry = append(compositeEntry, jarEntry)
 		}
 		return nil

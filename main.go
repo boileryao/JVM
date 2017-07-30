@@ -5,17 +5,17 @@ import "strings"
 import "JVM/classpath"
 
 func main() {
-	cmd := parse_cmd()
+	cmd := parseCmd()
 	if cmd.versionFlag {
 		fmt.Println("Boiler JVM, Version 0.0.1")
-	} else if cmd.helpFlag || cmd.class == ""{
-		print_usage()
+	} else if cmd.helpFlag || cmd.class == "" {
+		printUsage()
 	} else {
-		start_jvm(cmd)
+		startJvm(cmd)
 	}
 }
 
-func start_jvm(cmd *Cmd) {
+func startJvm(cmd *Cmd) {
 	fmt.Println("JVM Lanuched:")
 	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
 	fmt.Printf("Classpath:%s, class:%s args:%v\n",

@@ -6,26 +6,26 @@ import "strings"
 const pathListSeparator = string(os.PathListSeparator)
 
 type Entry interface {
-	read_class(className string) ([]byte, Entry, error)
-	to_string() string
+	readClass(className string) ([]byte, Entry, error)
+	String() string
 }
 
-func new_entry(path string) Entry {
+func newEntry(path string) Entry {
 	//multi jar path
 	if strings.Contains(path, pathListSeparator) {
-		return new_composite_entry(path)
+		return newCompositeEntry(path)
 	}
 
-	//ubprecious path
+	//wildcard path
 	if strings.HasSuffix(path, "*") {
-		return new_wildcard_entry(path)
+		return newWildcardEntry(path)
 	}
 
 	//archived file
-	if strings.HasSuffix(strings.ToUpper(path), ".JAR") || 
-	   strings.HasSuffix(strings.ToUpper(path), ".ZIP") {
-		return new_zip_entry(path)
+	if strings.HasSuffix(strings.ToUpper(path), ".JAR") ||
+		strings.HasSuffix(strings.ToUpper(path), ".ZIP") {
+		return newZipEntry(path)
 	}
 
-	return new_dir_entry(path)
+	return newDirEntry(path)
 }
