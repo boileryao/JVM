@@ -17,14 +17,12 @@ type ConstantUtf8Info struct {
 }
 
 func (string *ConstantUtf8Info) readInfo(reader *ClassReader) {
-
 	length := uint32(reader.readUint16())
 	bytes := reader.readBytes(length)
 	string.str = decodeMutf8(bytes)
 }
 
 func decodeMutf8(bytes []byte) string {
-	return string(bytes)
 	utf_len := len(bytes)
 	chars := make([]uint16, utf_len)
 

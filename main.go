@@ -36,7 +36,6 @@ func loadClass(klsName string, cp *classpath.Classpath) *classfile.ClassFile {
 		panic(err)
 	}
 
-	fmt.Printf("%v\n", classData)
 	cf, err := classfile.Parse(classData)
 	if err != nil {
 		panic(err)
@@ -46,7 +45,7 @@ func loadClass(klsName string, cp *classpath.Classpath) *classfile.ClassFile {
 
 func printKlsInfo(cf *classfile.ClassFile) {
 	fmt.Printf("Version\t\t: %v.%v\n", cf.MajorVersion(), cf.MinorVersion())
-	fmt.Printf("AccessFlag\t\t: 0x%x\n", cf.AccessFlags())
+	fmt.Printf("AccessFlag\t: 0x%x\n", cf.AccessFlags())
 	fmt.Printf("This Class\t: %v\n", cf.ClassName())
 	fmt.Printf("Super Class\t: %v\n", cf.SuperClassName())
 	fmt.Printf("Interfaces\t: %v\n", cf.InterfaceNames())
@@ -58,6 +57,6 @@ func printKlsInfo(cf *classfile.ClassFile) {
 
 	fmt.Printf("Method Count\t:%v\n", len(cf.Methods()))
 	for _, m := range cf.Methods() {
-		fmt.Printf("\t%s - %s", m.Name(), m.Descriptor())
+		fmt.Printf("\t%s - %s\n", m.Name(), m.Descriptor())
 	}
 }

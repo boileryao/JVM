@@ -1,7 +1,5 @@
 package classfile
 
-import "fmt"
-
 type ConstantPool []ConstantInfo
 
 func readConstantPool(reader *ClassReader) ConstantPool {
@@ -9,7 +7,6 @@ func readConstantPool(reader *ClassReader) ConstantPool {
 	cp := make([]ConstantInfo, cpCount)
 
 	for i := 1; i < cpCount; i++ {
-		fmt.Print("Reading #", i)
 		cp[i] = readConstantInfo(reader, cp)
 		switch cp[i].(type) {
 		case *ConstantLongInfo, *ConstantDoubleInfo:
@@ -20,7 +17,6 @@ func readConstantPool(reader *ClassReader) ConstantPool {
 }
 
 func (pool ConstantPool) getConstantInfo(index uint16) ConstantInfo {
-	fmt.Println("GetConstantInfo: index,", index)
 	if info := pool[index]; info != nil {
 		return info
 	}
