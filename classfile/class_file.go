@@ -23,7 +23,7 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 		if r := recover(); r != nil {
 			var ok bool
 			err, ok = r.(error)
-			if !ok {
+			if !ok {  // ok equals false
 				err = fmt.Errorf("%v", r)
 			}
 		}
@@ -38,7 +38,9 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 func (cf *ClassFile) read(reader *ClassReader) {
 	cf.readAndCheckMagic(reader)
 	cf.readAndCheckVersion(reader)
+	fmt.Println("CheckVersion")
 	cf.constantPool = readConstantPool(reader)
+	fmt.Println("ConstantPool")
 
 	cf.accessFlags = reader.readUint16()
 	cf.thisClass = reader.readUint16()
@@ -92,9 +94,12 @@ func (cf *ClassFile) Methods() []*MemberInfo {
 func (cf *ClassFile) ClassName() string {
 	return cf.constantPool.getClassName(cf.thisClass)
 }
+func (cf *ClassFile) ConstantPool() ConstantPool {
+	return cf.constantPool
+}
 
 func (cf *ClassFile) SuperClassName() string {
-	if cf.superClass <= 0 {
+	if cf.superClass == 0 {
 		return "" //java.lang.object has NO superclass
 	}
 	return cf.constantPool.getClassName(cf.superClass)

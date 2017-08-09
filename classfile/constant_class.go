@@ -7,7 +7,7 @@ CONSTANT_Class_info {
 }
 */
 type ConstantClassInfo struct {
-	cp        *ConstantPool
+	cp        ConstantPool
 	nameIndex uint16
 }
 

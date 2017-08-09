@@ -1,5 +1,7 @@
 package classfile
 
+import "fmt"
+
 const (
 	CONSTANT_Utf8               = 0x01
 	CONSTANT_Integer            = 0x03
@@ -42,23 +44,27 @@ func newConstantInfo(tag uint8, pool ConstantPool) ConstantInfo {
 	case CONSTANT_Utf8:
 		return &ConstantUtf8Info{}
 	case CONSTANT_String:
-		return
+		return &ConstantStringInfo{cp: pool}
 
 	case CONSTANT_Class:
-		return
-	case CONSTANT_FieldRef:
-		return
+		return &ConstantClassInfo{cp: pool}
 	case CONSTANT_NameAndType:
-		return
+		return &ConstantNameAndTypeInfo{}
+	case CONSTANT_FieldRef:
+		return &ConstantFieldRefInfo{ConstantMemberRefInfo{cp: pool}}
 	case CONSTANT_MethodRef:
-		return
-	case CONSTANT_MethodType:
-		return
-	case CONSTANT_MethodHandle:
-		return
-	case CONSTANT_InvokeDynamic:
-		return
+		return &ConstantMethodRefInfo{ConstantMemberRefInfo{cp: pool}}
 	case CONSTANT_InterfaceMethodRef:
-		return
+		return &ConstantInterfaceMethodRefInfo{ConstantMemberRefInfo{cp: pool}}
+
+	case CONSTANT_MethodType:
+		return &ConstantMethodTypeInfo{}
+	case CONSTANT_MethodHandle:
+		return &ConstantMethodHandleInfo{}
+	case CONSTANT_InvokeDynamic:
+		return &ConstantInvokeDynamicInfo{}
+	default:
+		fmt.Print("Ilegal Tag: ", tag)
+		panic("java.lang.ClassFormatError: Unknown Constant Pool TAG!")
 	}
 }

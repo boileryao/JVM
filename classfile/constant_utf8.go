@@ -17,8 +17,7 @@ type ConstantUtf8Info struct {
 }
 
 func (string *ConstantUtf8Info) readInfo(reader *ClassReader) {
-
-	length := uint32(reader.readUint32())
+	length := uint32(reader.readUint16())
 	bytes := reader.readBytes(length)
 	string.str = decodeMutf8(bytes)
 }
@@ -44,7 +43,7 @@ func decodeMutf8(bytes []byte) string {
 	for cnt < utf_len {
 		c = uint16(bytes[cnt])
 		switch c >> 4 {
-		case c < 8: // 0xxxxxxx
+		case 0, 1, 2, 3, 4, 5, 6, 7: // 0xxxxxxx
 			cnt++
 			chars[chars_cnt] = c
 			chars_cnt++
