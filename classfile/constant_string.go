@@ -1,7 +1,7 @@
 package classfile
 
 type ConstantStringInfo struct {
-	cp          *ConstantPool
+	cp          ConstantPool
 	stringIndex uint16
 }
 

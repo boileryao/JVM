@@ -24,6 +24,7 @@ func (string *ConstantUtf8Info) readInfo(reader *ClassReader) {
 }
 
 func decodeMutf8(bytes []byte) string {
+	return string(bytes)
 	utf_len := len(bytes)
 	chars := make([]uint16, utf_len)
 
@@ -44,7 +45,7 @@ func decodeMutf8(bytes []byte) string {
 	for cnt < utf_len {
 		c = uint16(bytes[cnt])
 		switch c >> 4 {
-		case c < 8: // 0xxxxxxx
+		case 0, 1, 2, 3, 4, 5, 6, 7: // 0xxxxxxx
 			cnt++
 			chars[chars_cnt] = c
 			chars_cnt++
