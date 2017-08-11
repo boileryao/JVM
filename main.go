@@ -1,10 +1,8 @@
 package main
 
 import "fmt"
-import "strings"
 import (
-	"JVM/classpath"
-	"JVM/classfile"
+	"JVM/rtdz"
 )
 
 func main() {
@@ -20,43 +18,37 @@ func main() {
 
 func startJvm(cmd *Cmd) {
 	fmt.Println("JVM Lanuched:")
-	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
-	fmt.Printf("Classpath:%s, class:%s args:%v\n",
-		cmd.cpOption, cmd.class, cmd.args)
-
-	className := strings.Replace(cmd.class, ".", "/", -1)
-	cf := loadClass(className, cp)
-	fmt.Println(cmd.class)
-	printKlsInfo(cf)
+	frame := rtdz.NewFrame(100, 100)
+	testLocalVars(frame.LocalVars())
+	testOperandStack(frame.OperandStack())
 }
 
-func loadClass(klsName string, cp *classpath.Classpath) *classfile.ClassFile {
-	classData, _, err := cp.ReadClass(klsName)
-	if err != nil {
-		panic(err)
-	}
-
-	cf, err := classfile.Parse(classData)
-	if err != nil {
-		panic(err)
-	}
-	return cf // abstraction of class file
+func testLocalVars(vars rtdz.LocalVars) {
+	vars.SetInt(0, 100)
+	vars.SetInt(1, -100)
+	vars.SetLong(2, 172331623333)
+	vars.SetLong(4, -2997924580)
+	vars.SetFloat(6, 3.14)
+	vars.SetDouble(7, 2.7113124141)
+	vars.SetRef(9, nil)
+	fmt.Println("Local Vars POP: ", vars.GetInt(0))
+	fmt.Println("Local Vars POP: ", vars.GetInt(1))
+	fmt.Println("Local Vars POP: ", vars.GetLong(2))
+	fmt.Println("Local Vars POP: ", vars.GetLong(4))
+	fmt.Println("Local Vars POP: ", vars.GetFloat(6))
+	fmt.Println("Local Vars POP: ", vars.GetDouble(7))
+	fmt.Println("Local Vars POP: ", vars.GetRef(9))
 }
 
-func printKlsInfo(cf *classfile.ClassFile) {
-	fmt.Printf("Version\t\t: %v.%v\n", cf.MajorVersion(), cf.MinorVersion())
-	fmt.Printf("AccessFlag\t: 0x%x\n", cf.AccessFlags())
-	fmt.Printf("This Class\t: %v\n", cf.ClassName())
-	fmt.Printf("Super Class\t: %v\n", cf.SuperClassName())
-	fmt.Printf("Interfaces\t: %v\n", cf.InterfaceNames())
-	fmt.Printf("Constant Count\t: %v\n", len(cf.ConstantPool()))
-	fmt.Printf("Fields Count\t:%v\n", len(cf.Fields()))
-	for _, f := range cf.Fields() {
-		fmt.Printf("\t%s - %s\n", f.Name(), f.Descriptor())
-	}
-
-	fmt.Printf("Method Count\t:%v\n", len(cf.Methods()))
-	for _, m := range cf.Methods() {
-		fmt.Printf("\t%s - %s\n", m.Name(), m.Descriptor())
-	}
+func testOperandStack(stack *rtdz.OperandStack) {
+	stack.PushInt(1)
+	stack.PushLong(23232235)
+	stack.PushDouble(2.71828182845)
+	stack.PushFloat(1.2323)
+	stack.PushRef(nil)
+	fmt.Println("Operand Stack POP: ", stack.PopRef())
+	fmt.Println("Operand Stack POP: ", stack.PopFloat())
+	fmt.Println("Operand Stack POP: ", stack.PopDouble())
+	fmt.Println("Operand Stack POP: ", stack.PopLong())
+	fmt.Println("Operand Stack POP: ", stack.PopInt())
 }
