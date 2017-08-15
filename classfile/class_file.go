@@ -38,9 +38,7 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 func (cf *ClassFile) read(reader *ClassReader) {
 	cf.readAndCheckMagic(reader)
 	cf.readAndCheckVersion(reader)
-	fmt.Println("CheckVersion")
 	cf.constantPool = readConstantPool(reader)
-	fmt.Println("ConstantPool")
 
 	cf.accessFlags = reader.readUint16()
 	cf.thisClass = reader.readUint16()

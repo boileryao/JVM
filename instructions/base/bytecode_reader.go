@@ -54,3 +54,8 @@ func (reader *BytecodeReader) SkipPadding() {
 		reader.ReadUint8()
 	}
 }
+
+func (reader *BytecodeReader) Reset(code []byte, pc int) {
+	reader.pc = pc
+	reader.code = code
+}

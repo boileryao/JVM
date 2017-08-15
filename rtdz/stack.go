@@ -33,7 +33,7 @@ func (stack *Stack) pop() *Frame {
 	top.lower = nil
 
 	stack.size--
-	return stack.top
+	return top
 }
 
 func (stack *Stack) peek() *Frame {

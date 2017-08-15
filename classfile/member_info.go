@@ -37,3 +37,13 @@ func (mi *MemberInfo) Name() string {
 func (mi *MemberInfo) Descriptor() string {
 	return mi.pool.getUtf8(mi.descriptorIndex)
 }
+
+func (mi *MemberInfo) CodeAttribute() *CodeAttribute {
+	for _, attr := range mi.attributes {
+		switch attr.(type) {
+		case *CodeAttribute:
+			return attr.(*CodeAttribute)
+		}
+	}
+	return nil
+}

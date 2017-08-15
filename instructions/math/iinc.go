@@ -1,7 +1,9 @@
 package math
 
-import "jvmgo/ch05/instructions/base"
-import "jvmgo/ch05/rtda"
+import (
+	"JVM/instructions/base"
+	"JVM/rtdz"
+)
 
 // Increment local variable by constant
 type IINC struct {
@@ -14,7 +16,7 @@ func (self *IINC) FetchOperands(reader *base.BytecodeReader) {
 	self.Const = int32(reader.ReadInt8())
 }
 
-func (self *IINC) Execute(frame *rtda.Frame) {
+func (self *IINC) Execute(frame *rtdz.Frame) {
 	localVars := frame.LocalVars()
 	val := localVars.GetInt(self.Index)
 	val += self.Const
