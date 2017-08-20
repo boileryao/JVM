@@ -14,6 +14,10 @@ func (integer *ConstantIntegerInfo) readInfo(reader *ClassReader) {
 	integer.val = int32(bytes)
 }
 
+func (integer *ConstantIntegerInfo) Value() int32 {
+	return integer.val
+}
+
 // java.long, type definition
 type ConstantLongInfo struct {
 	val int64
@@ -22,6 +26,10 @@ type ConstantLongInfo struct {
 func (long *ConstantLongInfo) readInfo(reader *ClassReader) {
 	bytes := reader.readUint64()
 	long.val = int64(bytes)
+}
+
+func (long *ConstantLongInfo) Value() int64 {
+	return long.val
 }
 
 // java.float, type definition
@@ -34,6 +42,10 @@ func (float *ConstantFloatInfo) readInfo(reader *ClassReader) {
 	float.val = float32(bytes)
 }
 
+func (float *ConstantFloatInfo) Value() float32 {
+	return float.val
+}
+
 // java.double, type definition
 type ConstantDoubleInfo struct {
 	val float64
@@ -42,4 +54,8 @@ type ConstantDoubleInfo struct {
 func (double *ConstantDoubleInfo) readInfo(reader *ClassReader) {
 	bytes := reader.readUint64()
 	double.val = float64(bytes)
+}
+
+func (double *ConstantDoubleInfo) Value() float64 {
+	return double.val
 }

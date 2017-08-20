@@ -1,18 +1,22 @@
 package rtdz
 
+import "JVM/rtdz/heap"
+
 type Frame struct {
 	lower        *Frame
 	localVars    LocalVars
 	operandStack *OperandStack
 	thread       *Thread
+	method       *heap.Method
 	nextPC       int
 }
 
-func NewFrame(thread *Thread, maxLocals, maxStack uint) *Frame {
+func newFrame(thread *Thread, method *heap.Method) *Frame {
 	return &Frame{
 		thread:       thread,
-		localVars:    newLocalVars(maxLocals),
-		operandStack: newOperandStack(maxStack),
+		method:       method,
+		localVars:    newLocalVars(method.MaxLocals()),
+		operandStack: newOperandStack(method.MaxStack()),
 	}
 }
 
@@ -25,6 +29,10 @@ func (frame *Frame) OperandStack() *OperandStack {
 
 func (frame *Frame) Thread() *Thread {
 	return frame.thread
+}
+
+func (frame *Frame) Method() *heap.Method {
+	return frame.method
 }
 
 func (frame *Frame) NextPC() int {

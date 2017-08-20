@@ -1,6 +1,9 @@
 package rtdz
 
-import "math"
+import (
+	"math"
+	"JVM/rtdz/heap"
+)
 
 type OperandStack struct {
 	size  uint
@@ -56,11 +59,11 @@ func (stack *OperandStack) PopDouble() float64 {
 	return math.Float64frombits(uint64(bits))
 }
 
-func (stack *OperandStack) PushRef(ref *Object) {
+func (stack *OperandStack) PushRef(ref *heap.Object) {
 	stack.slots[stack.size].ref = ref
 	stack.size++
 }
-func (stack *OperandStack) PopRef() *Object {
+func (stack *OperandStack) PopRef() *heap.Object {
 	stack.size--
 	return stack.slots[stack.size].ref
 }

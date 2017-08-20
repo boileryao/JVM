@@ -1,32 +1,28 @@
 package main
 
 import (
-	"JVM/classfile"
 	"JVM/rtdz"
 	"fmt"
 	"JVM/instructions/base"
 	"JVM/instructions"
+	"JVM/rtdz/heap"
 )
 
-func interpret(method *classfile.MemberInfo) {
-	code := method.CodeAttribute()
-	maxLocals := code.MaxLocals()
-	maxStack := code.MaxStack()
-	byteCode := code.Code()
-
+func interpret(method *heap.Method) {
 	thread := rtdz.NewThread()
-	frame := thread.NewFrame(maxLocals, maxStack)
+	frame := thread.NewFrame(method)
 	thread.PushFrame(frame)
 
 	defer catch(frame)
-	loop(thread, byteCode)
+	loop(thread, method.Code())
 }
 
 func catch(frame *rtdz.Frame) {
 	if r := recover(); r != nil {
 		fmt.Printf("Local Vars: %v\n", frame.LocalVars())
 		fmt.Printf("Operand Stack: %v\n", frame.OperandStack())
-		panic(r)
+		fmt.Println("The main method may returned")
+		//panic(r)
 	}
 }
 

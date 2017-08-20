@@ -1,10 +1,13 @@
 package rtdz
 
-import "math"
+import (
+	"math"
+	"JVM/rtdz/heap"
+)
 
 type Slot struct {
 	bits int32
-	ref  *Object
+	ref  *heap.Object
 }
 
 type LocalVars []Slot
@@ -49,9 +52,9 @@ func (vars LocalVars) GetDouble(index uint) float64 {
 	return math.Float64frombits(uint64(bits))
 }
 
-func (vars LocalVars) SetRef(index uint, ref *Object) {
+func (vars LocalVars) SetRef(index uint, ref *heap.Object) {
 	vars[index].ref = ref
 }
-func (vars LocalVars) GetRef(index uint) *Object {
+func (vars LocalVars) GetRef(index uint) *heap.Object {
 	return vars[index].ref
 }

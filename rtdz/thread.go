@@ -1,5 +1,7 @@
 package rtdz
 
+import "JVM/rtdz/heap"
+
 type Thread struct {
 	pc    int
 	stack *Stack
@@ -31,6 +33,6 @@ func (thread *Thread) CurrentFrame() *Frame {
 	return thread.stack.top
 }
 
-func (thread *Thread) NewFrame(maxLocals, maxStack uint) *Frame {
-	return NewFrame(thread, maxLocals, maxStack)
+func (thread *Thread) NewFrame(method *heap.Method) *Frame {
+	return newFrame(thread, method)
 }

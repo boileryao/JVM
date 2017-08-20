@@ -5,6 +5,7 @@ import (
 	"JVM/classpath"
 	"strings"
 	"JVM/classfile"
+	"JVM/rtdz/heap"
 )
 
 func main() {
@@ -22,9 +23,10 @@ func startJvm(cmd *Cmd) {
 	fmt.Println("JVM Lanuched:")
 
 	cp := classpath.Parse(cmd.XjreOption, cmd.cpOption)
+	classLoader := heap.NewClassLoader(cp)
 	className := strings.Replace(cmd.class, ".", "/", -1)
-	cf := loadClass(className, cp)
-	mainMethod := getMainMethod(cf)
+	mainClass := classLoader.LoadClass(className)
+	mainMethod := mainClass.GetMainMethod()
 
 	if mainMethod != nil {
 		interpret(mainMethod)
