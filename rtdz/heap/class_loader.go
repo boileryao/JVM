@@ -12,14 +12,16 @@ class names:
     - array classes: [Ljava/lang/Object; ...
 */
 type ClassLoader struct {
-	cp       *classpath.Classpath
-	classMap map[string]*Class // loaded classes
+	cp               *classpath.Classpath
+	classMap         map[string]*Class // loaded classes
+	verboseClassFlag bool
 }
 
-func NewClassLoader(cp *classpath.Classpath) *ClassLoader {
+func NewClassLoader(cp *classpath.Classpath, verboseClassFlag bool) *ClassLoader {
 	return &ClassLoader{
-		cp:       cp,
-		classMap: make(map[string]*Class),
+		cp:               cp,
+		verboseClassFlag: verboseClassFlag,
+		classMap:         make(map[string]*Class),
 	}
 }
 
@@ -29,14 +31,17 @@ func (loader *ClassLoader) LoadClass(name string) *Class {
 		return class
 	}
 
-	return loader.loadNonArrayClass(name)
+	return loader.loadNonArrayClass(name, loader.verboseClassFlag)
 }
 
-func (loader *ClassLoader) loadNonArrayClass(name string) *Class {
+func (loader *ClassLoader) loadNonArrayClass(name string, verboseClassFlag bool) *Class {
 	data, entry := loader.readClass(name)
 	class := loader.defineClass(data)
 	link(class)
-	fmt.Printf("[Loaded %s from %s]\n", name, entry)
+
+	if verboseClassFlag {
+		fmt.Printf("[Loaded %s from %s]\n", name, entry)
+	}
 	return class
 }
 

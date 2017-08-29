@@ -64,14 +64,19 @@ func (kls *Class) ConstantPool() *ConstantPool {
 func (kls *Class) StaticVars() Slots {
 	return kls.staticVars
 }
-
+func (kls *Class) SuperClass() *Class {
+	return kls.superClass
+}
+func (kls *Class) Name() string {
+	return kls.name
+}
 // jvm spec 5.4.4
 func (kls *Class) isAccessibleTo(other *Class) bool {
 	return kls.IsPublic() ||
-		kls.getPackageName() == other.getPackageName()
+		kls.GetPackageName() == other.GetPackageName()
 }
 
-func (kls *Class) getPackageName() string {
+func (kls *Class) GetPackageName() string {
 	if i := strings.LastIndex(kls.name, "/"); i >= 0 {
 		return kls.name[:i]
 	}
@@ -79,10 +84,10 @@ func (kls *Class) getPackageName() string {
 }
 
 func (kls *Class) GetMainMethod() *Method {
-	return kls.getStaticMethod("main", "([Ljava/lang/String;)V")
+	return kls.GetStaticMethod("main", "([Ljava/lang/String;)V")
 }
 
-func (kls *Class) getStaticMethod(name, descriptor string) *Method {
+func (kls *Class) GetStaticMethod(name, descriptor string) *Method {
 	for _, method := range kls.methods {
 		if method.IsStatic() &&
 			method.name == name &&
@@ -99,5 +104,5 @@ func (kls *Class) NewObject() *Object {
 }
 
 func (kls *Class) getMainMethod() *Method {
-	return kls.getStaticMethod("main", "([Ljava/lang/String;)V")
+	return kls.GetStaticMethod("main", "([Ljava/lang/String;)V")
 }

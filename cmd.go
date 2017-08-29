@@ -5,21 +5,25 @@ import "fmt"
 import "os"
 
 type Cmd struct {
-	helpFlag bool
-	versionFlag bool
-	cpOption string
-	class string
-	XjreOption string
-	args []string
+	helpFlag         bool
+	versionFlag      bool
+	verboseClassFlag bool
+	verboseInstFlag  bool
+	cpOption         string
+	class            string
+	XjreOption       string
+	args             []string
 }
 
-func parseCmd() *Cmd{
+func parseCmd() *Cmd {
 	cmd := &Cmd{}
 
 	flag.Usage = printUsage
 	flag.BoolVar(&cmd.helpFlag, "help", false, "print help messages")
-	flag.BoolVar(&cmd.helpFlag, "?", false, "print help messages")	
+	flag.BoolVar(&cmd.helpFlag, "?", false, "print help messages")
 	flag.BoolVar(&cmd.versionFlag, "version", false, "print version messages")
+	flag.BoolVar(&cmd.verboseClassFlag, "logKls", false, "print version messages")
+	flag.BoolVar(&cmd.verboseInstFlag, "logInst", false, "print version messages")
 	flag.StringVar(&cmd.cpOption, "classpath", "", "classpath")
 	flag.StringVar(&cmd.cpOption, "cp", "", "classpath")
 	flag.StringVar(&cmd.XjreOption, "Xjre", "", "path to jre")

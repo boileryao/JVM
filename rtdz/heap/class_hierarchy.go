@@ -2,7 +2,7 @@ package heap
 
 // jvm spec8 6.5.instanceof
 // jvm spec8 6.5.checkcast
-func (kls *Class) isAssignableFrom(other *Class) bool {
+func (kls *Class) IsAssignableFrom(other *Class) bool {
 	s, t := other, kls
 
 	if s == t {
@@ -10,14 +10,14 @@ func (kls *Class) isAssignableFrom(other *Class) bool {
 	}
 
 	if !t.IsInterface() {
-		return s.isSubClassOf(t)
+		return s.IsSubClassOf(t)
 	} else {
-		return s.isImplements(t)
+		return s.IsImplements(t)
 	}
 }
 
 // ref extends c
-func (kls *Class) isSubClassOf(other *Class) bool {
+func (kls *Class) IsSubClassOf(other *Class) bool {
 	for c := kls.superClass; c != nil; c = c.superClass {
 		if c == other {
 			return true
@@ -27,10 +27,10 @@ func (kls *Class) isSubClassOf(other *Class) bool {
 }
 
 // ref implements iface
-func (kls *Class) isImplements(iface *Class) bool {
+func (kls *Class) IsImplements(iface *Class) bool {
 	for c := kls; c != nil; c = c.superClass {
 		for _, i := range c.interfaces {
-			if i == iface || i.isSubInterfaceOf(iface) {
+			if i == iface || i.IsSubInterfaceOf(iface) {
 				return true
 			}
 		}
@@ -39,11 +39,16 @@ func (kls *Class) isImplements(iface *Class) bool {
 }
 
 // ref extends iface
-func (kls *Class) isSubInterfaceOf(iface *Class) bool {
+func (kls *Class) IsSubInterfaceOf(iface *Class) bool {
 	for _, superInterface := range kls.interfaces {
-		if superInterface == iface || superInterface.isSubInterfaceOf(iface) {
+		if superInterface == iface || superInterface.IsSubInterfaceOf(iface) {
 			return true
 		}
 	}
 	return false
+}
+
+// c extends self
+func (kls *Class) IsSuperClassOf(other *Class) bool {
+	return other.IsSubClassOf(kls)
 }

@@ -36,3 +36,7 @@ func (thread *Thread) CurrentFrame() *Frame {
 func (thread *Thread) NewFrame(method *heap.Method) *Frame {
 	return newFrame(thread, method)
 }
+
+func (thread *Thread) IsStackEmpty() bool {
+	return thread.stack.top == nil
+}

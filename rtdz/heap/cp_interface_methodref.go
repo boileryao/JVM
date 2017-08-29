@@ -23,6 +23,29 @@ func (ref *InterfaceMethodRef) ResolvedInterfaceMethod() *Method {
 
 // jvm spec8 5.4.3.4
 func (ref *InterfaceMethodRef) resolveInterfaceMethodRef() {
-	//class := ref.ResolveClass()
-	// todo
+	d := ref.cp.class
+	c := ref.ResolvedClass()
+	if !c.IsInterface() {
+		panic("java.lang.IncompatibleClassChangeError")
+	}
+
+	method := lookupInterfaceMethod(c, ref.name, ref.descriptor)
+	if method == nil {
+		panic("java.lang.NoSuchMethodError")
+	}
+	if !method.isAccessibleTo(d) {
+		panic("java.lang.IllegalAccessError")
+	}
+
+	ref.method = method
+}
+
+func lookupInterfaceMethod(iface *Class, name, descriptor string) *Method {
+	for _, method := range iface.methods {
+		if method.name == name && method.descriptor == descriptor {
+			return method
+		}
+	}
+
+	return lookupMethodInInterfaces(iface.interfaces, name, descriptor)
 }
