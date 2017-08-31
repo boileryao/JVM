@@ -74,9 +74,18 @@ func (kls *Class) Name() string {
 func (kls *Class) Inited() bool {
 	return kls.inited
 }
+func (kls *Class) Loader() *ClassLoader {
+	return kls.loader
+}
 
 func (kls *Class) SetInited() {
 	kls.inited = true
+}
+
+// array related
+func (kls *Class) ArrayClass() *Class{
+	arrKlsName := getArrayClassName(kls.name)
+	return kls.loader.LoadClass(arrKlsName)
 }
 
 // jvm spec 5.4.4

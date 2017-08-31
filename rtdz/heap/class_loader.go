@@ -31,7 +31,11 @@ func (loader *ClassLoader) LoadClass(name string) *Class {
 		return class
 	}
 
-	return loader.loadNonArrayClass(name, loader.verboseClassFlag)
+	if name[0] == '[' {
+		return loader.loadArrayClass(name)
+	} else {
+		return loader.loadNonArrayClass(name, loader.verboseClassFlag)
+	}
 }
 
 func (loader *ClassLoader) loadNonArrayClass(name string, verboseClassFlag bool) *Class {
@@ -42,6 +46,22 @@ func (loader *ClassLoader) loadNonArrayClass(name string, verboseClassFlag bool)
 	if verboseClassFlag {
 		fmt.Printf("[Loaded %s from %s]\n", name, entry)
 	}
+	return class
+}
+
+func (loader *ClassLoader) loadArrayClass(name string) *Class {
+	class := &Class{
+		accessFlags: ACC_PUBLIC,
+		name:        name,
+		loader:      loader,
+		inited:      true,
+		superClass:  loader.LoadClass("java/lang/Object"),
+		interfaces: []*Class{
+			loader.LoadClass("java/lang/Cloneable"),
+			loader.LoadClass("java/io/Serializable"),
+		},
+	}
+	loader.classMap[name] = class
 	return class
 }
 
