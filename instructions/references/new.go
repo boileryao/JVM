@@ -15,6 +15,12 @@ func (new *NEW) Execute(frame *rtdz.Frame) {
 	classRef := pool.GetConstant(new.Index).(*heap.ClassRef)
 	class := classRef.ResolvedClass()
 
+	if !class.Inited() {
+		frame.RevertNextPC()
+		base.InitClass(frame.Thread(), class)
+		return
+	}
+
 	if class.IsInterface() || class.IsAbstract() {  //should not be initialized
 		panic("java.lang.InstantiationError, Interface or Abstract Class")
 	}

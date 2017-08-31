@@ -17,4 +17,12 @@ func InvokeMethod(invoker *rtdz.Frame, method *heap.Method) {
 			newFrame.LocalVars().SetSlot(uint(i), slot)
 		}
 	}
+
+	if method.IsNative() {
+		if method.Name() == "registerNatives" {
+			thread.PopFrame()
+		} else {
+			panic("native method not supported yet")
+		}
+	}
 }

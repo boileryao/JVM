@@ -15,7 +15,12 @@ func (put *PUT_STATIC) Execute(frame *rtdz.Frame) {
 	fieldRef := pool.GetConstant(put.Index).(*heap.FieldRef)
 	field := fieldRef.ResolvedField()
 	class := field.Class()
-	// todo: init class
+
+	if !class.Inited() {
+		frame.RevertNextPC()
+		base.InitClass(frame.Thread(), class)
+		return
+	}
 
 	if !field.IsStatic() {
 		panic("java.lang.IncompatibleClassChangeError")

@@ -18,6 +18,7 @@ type Class struct {
 	instanceSlotCount uint
 	staticSlotCount   uint
 	staticVars        Slots
+	inited            bool
 }
 
 func newClass(cf *classfile.ClassFile) *Class {
@@ -70,6 +71,14 @@ func (kls *Class) SuperClass() *Class {
 func (kls *Class) Name() string {
 	return kls.name
 }
+func (kls *Class) Inited() bool {
+	return kls.inited
+}
+
+func (kls *Class) SetInited() {
+	kls.inited = true
+}
+
 // jvm spec 5.4.4
 func (kls *Class) isAccessibleTo(other *Class) bool {
 	return kls.IsPublic() ||
@@ -97,6 +106,10 @@ func (kls *Class) GetStaticMethod(name, descriptor string) *Method {
 		}
 	}
 	return nil
+}
+
+func (kls *Class) GetClinitMethod() *Method {
+	return kls.GetStaticMethod("<clinit>", "()V")
 }
 
 func (kls *Class) NewObject() *Object {
