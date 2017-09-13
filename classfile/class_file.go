@@ -23,7 +23,7 @@ func Parse(classData []byte) (cf *ClassFile, err error) {
 		if r := recover(); r != nil {
 			var ok bool
 			err, ok = r.(error)
-			if !ok {  // ok equals false
+			if !ok { // ok equals false
 				err = fmt.Errorf("%v", r)
 			}
 		}

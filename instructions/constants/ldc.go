@@ -1,7 +1,10 @@
 package constants
 
 import "JVM/instructions/base"
-import "JVM/rtdz"
+import (
+	"JVM/rtdz"
+	"JVM/rtdz/heap"
+)
 
 // Push item from run-time constant pool
 type LDC struct{ base.Index8Instruction }
@@ -19,15 +22,17 @@ func (ldc *LDC_W) Execute(frame *rtdz.Frame) {
 
 func _ldc(frame *rtdz.Frame, index uint) {
 	stack := frame.OperandStack()
-	pool := frame.Method().Class().ConstantPool()
-	c := pool.GetConstant(index)
+	class := frame.Method().Class()
+	c := class.ConstantPool().GetConstant(index)
 
 	switch c.(type) {
 	case int32:
 		stack.PushInt(c.(int32))
 	case float32:
 		stack.PushFloat(c.(float32))
-		// case string:
+	case string:
+		internedStr := heap.JString(class.Loader(), c.(string))
+		stack.PushRef(internedStr)
 		// case *heap.ClassRef:
 		// case MethodType, MethodHandle
 	default:

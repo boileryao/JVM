@@ -13,7 +13,7 @@ class names:
 */
 type ClassLoader struct {
 	cp               *classpath.Classpath
-	classMap         map[string]*Class // loaded classes
+	classMap         map[string]*Class // loaded classes/
 	verboseClassFlag bool
 }
 
@@ -26,14 +26,17 @@ func NewClassLoader(cp *classpath.Classpath, verboseClassFlag bool) *ClassLoader
 }
 
 func (loader *ClassLoader) LoadClass(name string) *Class {
+	fmt.Printf("Prepare to Load %s\n", name)
 	if class, ok := loader.classMap[name]; ok {
 		// already loaded
 		return class
 	}
 
 	if name[0] == '[' {
-		return loader.loadArrayClass(name)
+		fmt.Print("Array& ")
+		return loader.loadArrayClass(name, loader.verboseClassFlag)
 	} else {
+		fmt.Print("NonArray& ")
 		return loader.loadNonArrayClass(name, loader.verboseClassFlag)
 	}
 }
@@ -49,7 +52,7 @@ func (loader *ClassLoader) loadNonArrayClass(name string, verboseClassFlag bool)
 	return class
 }
 
-func (loader *ClassLoader) loadArrayClass(name string) *Class {
+func (loader *ClassLoader) loadArrayClass(name string, verboseClassFlag bool) *Class {
 	class := &Class{
 		accessFlags: ACC_PUBLIC,
 		name:        name,
@@ -62,6 +65,10 @@ func (loader *ClassLoader) loadArrayClass(name string) *Class {
 		},
 	}
 	loader.classMap[name] = class
+
+	if verboseClassFlag {
+		fmt.Printf("[Loaded %s]\n", name)
+	}
 	return class
 }
 
@@ -186,7 +193,9 @@ func initStaticFinalVar(class *Class, field *Field) {
 			val := cp.GetConstant(cpIndex).(float64)
 			vars.SetDouble(slotId, val)
 		case "Ljava/lang/String;":
-			panic("todo")
+			goStr := cp.GetConstant(cpIndex).(string)
+			jStr := JString(class.Loader(), goStr)
+			vars.SetRef(slotId, jStr)
 		}
 	}
 }

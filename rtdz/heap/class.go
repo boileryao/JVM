@@ -71,6 +71,7 @@ func (kls *Class) SuperClass() *Class {
 func (kls *Class) Name() string {
 	return kls.name
 }
+
 func (kls *Class) Inited() bool {
 	return kls.inited
 }
@@ -83,7 +84,7 @@ func (kls *Class) SetInited() {
 }
 
 // array related
-func (kls *Class) ArrayClass() *Class{
+func (kls *Class) ArrayClass() *Class {
 	arrKlsName := getArrayClassName(kls.name)
 	return kls.loader.LoadClass(arrKlsName)
 }
@@ -102,12 +103,12 @@ func (kls *Class) GetPackageName() string {
 }
 
 func (kls *Class) GetMainMethod() *Method {
-	return kls.GetStaticMethod("main", "([Ljava/lang/String;)V")
+	return kls.getStaticMethod("main", "([Ljava/lang/String;)V", true)
 }
 
-func (kls *Class) GetStaticMethod(name, descriptor string) *Method {
+func (kls *Class) getStaticMethod(name, descriptor string, isStatic bool) *Method {
 	for _, method := range kls.methods {
-		if method.IsStatic() &&
+		if method.IsStatic() == isStatic &&
 			method.name == name &&
 			method.descriptor == descriptor {
 
@@ -118,7 +119,7 @@ func (kls *Class) GetStaticMethod(name, descriptor string) *Method {
 }
 
 func (kls *Class) GetClinitMethod() *Method {
-	return kls.GetStaticMethod("<clinit>", "()V")
+	return kls.getStaticMethod("<clinit>", "()V", true)
 }
 
 func (kls *Class) NewObject() *Object {
@@ -126,5 +127,19 @@ func (kls *Class) NewObject() *Object {
 }
 
 func (kls *Class) getMainMethod() *Method {
-	return kls.GetStaticMethod("main", "([Ljava/lang/String;)V")
+	return kls.getStaticMethod("main", "([Ljava/lang/String;)V", true)
+}
+
+func (kls *Class) getField(name, descriptor string, isStatic bool) *Field {
+	for c := kls; c != nil; c = c.superClass {
+		for _, field := range c.fields {
+			if field.IsStatic() == isStatic &&
+				field.name == name &&
+				field.descriptor == descriptor {
+
+				return field
+			}
+		}
+	}
+	return nil
 }

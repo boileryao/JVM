@@ -27,9 +27,9 @@ func startJvm(cmd *Cmd) {
 	mainMethod := mainClass.GetMainMethod()
 
 	if mainMethod != nil {
-		interpret(mainMethod, cmd.verboseInstFlag)
+		interpret(mainMethod, cmd.verboseInstFlag, cmd.args)
 	} else {
-		fmt.Printf("Not Found Main Method in %s.", className)
+		fmt.Printf("Not Found Main Method in %s.", cmd.class)
 	}
 }
 
