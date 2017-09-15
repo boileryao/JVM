@@ -19,6 +19,7 @@ type Class struct {
 	staticSlotCount   uint
 	staticVars        Slots
 	inited            bool
+	jClass            *Object // class object
 }
 
 func newClass(cf *classfile.ClassFile) *Class {
@@ -71,6 +72,9 @@ func (kls *Class) SuperClass() *Class {
 func (kls *Class) Name() string {
 	return kls.name
 }
+func (kls *Class) JClass() *Object {
+	return kls.jClass
+}
 
 func (kls *Class) Inited() bool {
 	return kls.inited
@@ -83,10 +87,19 @@ func (kls *Class) SetInited() {
 	kls.inited = true
 }
 
+func (kls *Class) IsPrimitive() bool {
+	_, ok := primitiveTypes[kls.name]
+	return ok
+}
+
 // array related
 func (kls *Class) ArrayClass() *Class {
 	arrKlsName := getArrayClassName(kls.name)
 	return kls.loader.LoadClass(arrKlsName)
+}
+
+func (kls *Class) JavaName() string {
+	return strings.Replace(kls.name, "/", ".", -1)
 }
 
 // jvm spec 5.4.4
@@ -103,10 +116,10 @@ func (kls *Class) GetPackageName() string {
 }
 
 func (kls *Class) GetMainMethod() *Method {
-	return kls.getStaticMethod("main", "([Ljava/lang/String;)V", true)
+	return kls.getMethod("main", "([Ljava/lang/String;)V", true)
 }
 
-func (kls *Class) getStaticMethod(name, descriptor string, isStatic bool) *Method {
+func (kls *Class) getMethod(name, descriptor string, isStatic bool) *Method {
 	for _, method := range kls.methods {
 		if method.IsStatic() == isStatic &&
 			method.name == name &&
@@ -119,15 +132,24 @@ func (kls *Class) getStaticMethod(name, descriptor string, isStatic bool) *Metho
 }
 
 func (kls *Class) GetClinitMethod() *Method {
-	return kls.getStaticMethod("<clinit>", "()V", true)
+	return kls.getMethod("<clinit>", "()V", true)
 }
 
 func (kls *Class) NewObject() *Object {
 	return newObject(kls)
 }
 
-func (kls *Class) getMainMethod() *Method {
-	return kls.getStaticMethod("main", "([Ljava/lang/String;)V", true)
+func (kls *Class) GetInstanceMethod(name, descriptor string) *Method {
+	return kls.getMethod(name, descriptor, false)
+}
+
+func (kls *Class) GetRefVar(fieldName, fieldDescriptor string) *Object {
+	field := kls.getField(fieldName, fieldDescriptor, true)
+	return kls.staticVars.GetRef(field.slotId)
+}
+func (kls *Class) SetRefVar(fieldName, fieldDescriptor string, ref *Object) {
+	field := kls.getField(fieldName, fieldDescriptor, true)
+	kls.staticVars.SetRef(field.slotId, ref)
 }
 
 func (kls *Class) getField(name, descriptor string, isStatic bool) *Field {

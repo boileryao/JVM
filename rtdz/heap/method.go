@@ -13,13 +13,40 @@ type Method struct {
 func newMethods(class *Class, cfMethods []*classfile.MemberInfo) []*Method {
 	methods := make([]*Method, len(cfMethods))
 	for i, cfMethod := range cfMethods {
-		methods[i] = &Method{}
-		methods[i].class = class
-		methods[i].copyMemberInfo(cfMethod)
-		methods[i].copyAttributes(cfMethod)
-		methods[i].calcArgSlotCount()
+		methods[i] = newMethod(class, cfMethod)
 	}
 	return methods
+}
+func newMethod(class *Class, info *classfile.MemberInfo) *Method {
+	method := &Method{}
+	method.class = class
+	method.copyMemberInfo(info)
+	method.copyAttributes(info)
+	md := parseMethodDescriptor(method.descriptor)
+	method.calcArgSlotCount(md.parameterTypes)
+	if method.IsNative() {
+		method.injectCodeAttribute(md.returnType)
+	}
+	return method
+}
+
+func (m *Method) injectCodeAttribute(returnType string) {
+	m.maxStack = 4
+	m.maxLocals = m.argSlotCount
+	switch returnType[0] {
+	case 'V': // void
+		m.code = []byte{0xfe, 0xb1}
+	case 'D': // double
+		m.code = []byte{0xfe, 0xaf}
+	case 'F': // float
+		m.code = []byte{0xfe, 0xae}
+	case 'J': // long
+		m.code = []byte{0xfe, 0xad}
+	case 'L', '[': // ref, array
+		m.code = []byte{0xfe, 0xb0}
+	default: // integer, short, byte, char
+		m.code = []byte{0xfe, 0xac}
+	}
 }
 
 func (m *Method) copyAttributes(cfMethod *classfile.MemberInfo) {
@@ -30,9 +57,8 @@ func (m *Method) copyAttributes(cfMethod *classfile.MemberInfo) {
 	}
 }
 
-func (m *Method) calcArgSlotCount() {
-	parsedDescriptor := parseMethodDescriptor(m.descriptor)
-	for _, paramType := range parsedDescriptor.parameterTypes {
+func (m *Method) calcArgSlotCount(paramTypes []string) {
+	for _, paramType := range paramTypes {
 		m.argSlotCount++
 		if paramType == "J" || paramType == "D" {
 			m.argSlotCount++

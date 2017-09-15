@@ -88,8 +88,8 @@ func (kls *Class) IsSuperClassOf(other *Class) bool {
 }
 
 // iface extends kls
-func (self *Class) isSuperInterfaceOf(iface *Class) bool {
-	return iface.isSubInterfaceOf(self)
+func (kls *Class) isSuperInterfaceOf(iface *Class) bool {
+	return iface.isSubInterfaceOf(kls)
 }
 
 func (kls *Class) isJlObject() bool {

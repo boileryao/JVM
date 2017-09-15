@@ -1,5 +1,7 @@
 package classfile
 
+import "math"
+
 /*
  * type definitions of numeric types
  */
@@ -39,7 +41,7 @@ type ConstantFloatInfo struct {
 
 func (float *ConstantFloatInfo) readInfo(reader *ClassReader) {
 	bytes := reader.readUint32()
-	float.val = float32(bytes)
+	float.val = math.Float32frombits(bytes)
 }
 
 func (float *ConstantFloatInfo) Value() float32 {
@@ -53,7 +55,7 @@ type ConstantDoubleInfo struct {
 
 func (double *ConstantDoubleInfo) readInfo(reader *ClassReader) {
 	bytes := reader.readUint64()
-	double.val = float64(bytes)
+	double.val = math.Float64frombits(bytes)
 }
 
 func (double *ConstantDoubleInfo) Value() float64 {

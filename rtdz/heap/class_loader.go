@@ -18,26 +18,62 @@ type ClassLoader struct {
 }
 
 func NewClassLoader(cp *classpath.Classpath, verboseClassFlag bool) *ClassLoader {
-	return &ClassLoader{
+	loader := &ClassLoader{
 		cp:               cp,
 		verboseClassFlag: verboseClassFlag,
 		classMap:         make(map[string]*Class),
 	}
+	loader.loadBasicClasses()
+	loader.loadPrimitiveClasses()
+	return loader
 }
 
 func (loader *ClassLoader) LoadClass(name string) *Class {
-	fmt.Printf("Prepare to Load %s\n", name)
 	if class, ok := loader.classMap[name]; ok {
 		// already loaded
 		return class
 	}
 
+	var class *Class
 	if name[0] == '[' {
-		fmt.Print("Array& ")
-		return loader.loadArrayClass(name, loader.verboseClassFlag)
+		class = loader.loadArrayClass(name, loader.verboseClassFlag)
 	} else {
-		fmt.Print("NonArray& ")
-		return loader.loadNonArrayClass(name, loader.verboseClassFlag)
+		class = loader.loadNonArrayClass(name, loader.verboseClassFlag)
+	}
+
+	if jlClassClass, ok := loader.classMap["java/lang/Class"]; ok {
+		class.jClass = jlClassClass.NewObject()
+		class.jClass.extra = class
+	}
+
+	return class
+}
+
+func (loader *ClassLoader) loadPrimitiveClasses() {
+	for primitiveType, _ := range primitiveTypes {
+		loader.loadPrimitiveClass(primitiveType)
+	}
+}
+
+func (loader *ClassLoader) loadPrimitiveClass(name string) {
+	class := &Class{
+		accessFlags: ACC_PUBLIC,
+		name:        name,
+		loader:      loader,
+		inited:      true,
+	}
+	class.jClass = loader.classMap["java/lang/Class"].NewObject()
+	class.jClass.extra = class
+	loader.classMap[name] = class
+}
+
+func (loader *ClassLoader) loadBasicClasses() {
+	classClass := loader.LoadClass("java/lang/Class")
+	for _, class := range loader.classMap {
+		if class.jClass == nil {
+			class.jClass = classClass.NewObject()
+			class.jClass.extra = class
+		}
 	}
 }
 
@@ -67,7 +103,7 @@ func (loader *ClassLoader) loadArrayClass(name string, verboseClassFlag bool) *C
 	loader.classMap[name] = class
 
 	if verboseClassFlag {
-		fmt.Printf("[Loaded %s]\n", name)
+		fmt.Printf("[Loaded Array Class %s]\n", name)
 	}
 	return class
 }
