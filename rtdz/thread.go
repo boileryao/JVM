@@ -40,3 +40,11 @@ func (thread *Thread) NewFrame(method *heap.Method) *Frame {
 func (thread *Thread) IsStackEmpty() bool {
 	return thread.stack.top == nil
 }
+
+func (thread *Thread) Clear() {
+	thread.stack.clear()
+}
+
+func (thread *Thread) GetFrames() []*Frame {
+	return thread.stack.getFrames()
+}

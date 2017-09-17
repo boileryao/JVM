@@ -20,6 +20,7 @@ type Class struct {
 	staticVars        Slots
 	inited            bool
 	jClass            *Object // class object
+	sourceFile        string
 }
 
 func newClass(cf *classfile.ClassFile) *Class {
@@ -31,7 +32,15 @@ func newClass(cf *classfile.ClassFile) *Class {
 	class.constantPool = newConstantPool(class, cf.ConstantPool())
 	class.fields = newFields(class, cf.Fields())
 	class.methods = newMethods(class, cf.Methods())
+	class.sourceFile = getSourceFile(cf)
 	return class
+}
+
+func getSourceFile(cf *classfile.ClassFile) string {
+	if attr := cf.SourceFileAttribute(); attr != nil {
+		return attr.FileName()
+	}
+	return "UnknownSourceFileName"
 }
 
 func (kls *Class) IsPublic() bool {
@@ -81,6 +90,9 @@ func (kls *Class) Inited() bool {
 }
 func (kls *Class) Loader() *ClassLoader {
 	return kls.loader
+}
+func (kls *Class) SourceFile() string {
+	return kls.sourceFile
 }
 
 func (kls *Class) SetInited() {

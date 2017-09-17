@@ -39,3 +39,17 @@ func (stack *Stack) pop() *Frame {
 func (stack *Stack) peek() *Frame {
 	return stack.top
 }
+
+func (stack *Stack) clear() {
+	for stack.size > 0 {
+		stack.pop()
+	}
+}
+
+func (stack *Stack) getFrames() []*Frame {
+	frames := make([]*Frame, 0, stack.size)
+	for frame := stack.top; frame != nil; frame = frame.lower {
+		frames = append(frames, frame)
+	}
+	return frames
+}

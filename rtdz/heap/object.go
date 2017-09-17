@@ -27,6 +27,10 @@ func (obj *Object) Class() *Class {
 func (obj *Object) Fields() Slots {
 	return obj.data.(Slots)
 }
+
+func (obj *Object) SetExtra(extra interface{}) {
+	obj.extra = extra
+}
 func (obj *Object) Extra() interface{} {
 	return obj.extra
 }

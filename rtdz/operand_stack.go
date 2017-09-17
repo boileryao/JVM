@@ -80,3 +80,11 @@ func (stack *OperandStack) PopSlot() Slot {
 func (stack *OperandStack) GetRefFromTop(depth uint) *heap.Object {
 	return stack.slots[(stack.size-1)-depth].ref
 }
+
+func (stack *OperandStack) Clear() {
+	for i := range stack.slots {
+		stack.slots[i].ref = nil
+		stack.slots[i].bits = 0
+	}
+	stack.size = 0
+}

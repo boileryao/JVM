@@ -69,6 +69,7 @@ func decodeMutf8(bytes []byte) string {
 				panic(fmt.Errorf("Malformed UTF around byte %v", cnt))
 			}
 			chars[chars_cnt] = c&0x0F<<12 | c2&0x3F<<6 | c3&0x3F<<0
+			chars_cnt++
 		}
 	}
 	chars = chars[0:chars_cnt]
